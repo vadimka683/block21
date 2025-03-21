@@ -21,13 +21,13 @@ void list(vector<statement>& all) {
 }
 
 void file_empty() {
-	ifstream file("save.bin",ios::binary);
+	ifstream file("save.txt");
 	if (file.is_open()) {
 		file.close();
 	}
 	else {
 		file.close();
-		ofstream file("save.bin", ios::binary);
+		ofstream file("save.txt");
 		file.close();
 	}
 }
@@ -35,32 +35,17 @@ void file_empty() {
 void read_file(vector<statement>& all) {
 	all.clear();
 	file_empty();
-	ifstream file("save.bin", ios::binary);
+	ifstream file("save.txt");
 	while (!file.eof())
 	{
 		statement p;
-		int len = 0;
-		file.read(reinterpret_cast<char*>(&len), sizeof(len));
-		if (len != 0) {
-			p.name.resize(len);
-			file.read(reinterpret_cast<char*>(&p.name[0]), len);
-		}
-		else {
-			break;
-		}
-
-		file.read(reinterpret_cast<char*>(&len), sizeof(len));
-		p.surname.resize(len);
-		file.read(reinterpret_cast<char*>(&p.surname[0]), len);
-
-		file.read(reinterpret_cast<char*>(&len), sizeof(len));
-		p.date.resize(len);
-		file.read(reinterpret_cast<char*>(&p.date[0]), len);
-
-		file.read(reinterpret_cast<char*>(&p.money), sizeof(p.money));
-
+		file >> p.name;
+		file >> p.surname;
+		file >> p.date;
+		file >> p.money;
 		all.push_back(p);
 	}
+	file.close();
 }
 
 void app_end(vector<statement>& all, stringstream& user) {
@@ -70,23 +55,17 @@ void app_end(vector<statement>& all, stringstream& user) {
 }
 
 void push_vector(vector<statement>& all) {
-	ofstream file("save.bin", ios::binary);
+	ofstream file("save.txt");
 	for (int i = 0; i < all.size(); i++) {
-		int len;
-		len = all[i].name.length();
-		file.write(reinterpret_cast<char*>(&len), sizeof(len));
-		file.write(all[i].name.c_str(), len);
-
-		len = all[i].surname.length();
-		file.write(reinterpret_cast<char*>(&len), sizeof(len));
-		file.write(all[i].surname.c_str(), len);
-		
-		len = all[i].date.length();
-		file.write(reinterpret_cast<char*>(&len), sizeof(len));
-		file.write(all[i].date.c_str(), len);
-		
-		file.write(reinterpret_cast<char*>(&all[i].money), sizeof(all[i].money));
+		file << all[i].name << " ";
+		file << all[i].surname << " ";
+		file << all[i].date << " ";
+		file << all[i].money;
+		if (i < all.size() - 1) {
+			file << "\n";
+		}
 	}
+	file.close();
 }
 
 int main() {
@@ -101,6 +80,7 @@ int main() {
 			list(all);
 		}
 		else if (comand == "add") {
+			read_file(all);
 			cin.ignore();
 			string user;
 			cout << "Input: name surname date money: ";
