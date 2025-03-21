@@ -7,111 +7,71 @@ enum buildings { garage = 1, shed = 2, bathhouse = 4, house = 8 };
 
 enum rooms{ bedroom = 1, kitchen = 2, bathroom = 4, children_room = 8, living_room = 16 };
 
-enum bake{ yes = 1, no = 2};
+
+struct Room
+{
+	int Square = 0;
+	int what_room = 0;
+};
+
+struct Floor
+{
+	int ceiling_height = 0;
+	vector<Room> room_ss;
+};
 
 struct Bulds 
 {
-	struct House_s
-	{
-		int Square_H = 0;
-		struct Room
-		{
-			int Square = 0;
-			int what_room = 0;
-		};
-		struct Floor
-		{
-			int ceiling_height = 0;
-			int count_room = 0;
-			vector<Room> room_ss;
-		};
+	buildings type;
+	int Square = 0;
+	bool backs = false;
+	vector<Floor> floor_ss;
+};
 
-		int Square = 0;
-		int count_floar = 0;
-		int backs = 0;
-		vector<Floor> floor_ss;
-	};
-
-	struct Garage
-	{
-		int Square = 0;
-	};
-
-	struct Shed
-	{
-		int Square = 0;
-	};
-
-	struct Bathhouse
-	{
-		int Square = 0;
-		int backs = 0;
-	};
-
-	vector<House_s> house_ss;
-	vector<Garage> garage_ss;
-	vector<Shed> shed_ss;
-	vector<Bathhouse> bathhouse_ss;
+struct Plot
+{
+	int number = 0;
+	double area = 0;
+	vector<Bulds> buld_ss;
 };
 
 struct Village
 {
-	struct Plot
-	{
-		int number = 0;
-		int bulds = 0;
-		vector<Bulds> buld_ss;
-	};
-
 	int Square = 0;
-	int count_plot = 0;
 	vector<Plot> plot_ss;
 };
 
-void input_room(Bulds::House_s::Floor& flor_1) {
+void input_room(Room& room_1) {
 	int count_2 = 0;
-	while (count_2 < flor_1.count_room) {
-		Bulds::House_s::Room room_1;
-		cout << "Input Squar " << count_2 + 1 << " room: ";
-		cin >> room_1.Square;
-		char answer_;
-		cout << "What is the room: 1.bedroom, 2.kitchen, 3.bathroom, 4.children_room, 5.living_room = 16 ? ";
-		cin >> answer_;
-		switch (answer_)
-		{
-		case '1':room_1.what_room |= bedroom; break;
-		case '2':room_1.what_room |= kitchen; break;
-		case '3':room_1.what_room |= bathroom; break;
-		case '4':room_1.what_room |= children_room; break;
-		case '5':room_1.what_room |= living_room; break;
-		default:cout << "Input Error";
-			break;
+	count_2++;
+	cout << "Input Squar " << count_2 + 1 << " room: ";
+	cin >> room_1.Square;
+	char answer_;
+	cout << "What is the room: 1.bedroom, 2.kitchen, 3.bathroom, 4.children_room, 5.living_room = 16 ? ";
+	cin >> answer_;
+	switch (answer_)
+	{
+	case '1':room_1.what_room |= bedroom; break;
+	case '2':room_1.what_room |= kitchen; break;
+	case '3':room_1.what_room |= bathroom; break;
+	case '4':room_1.what_room |= children_room; break;
+	case '5':room_1.what_room |= living_room; break;
+	default:cout << "Input Error";
+		break;
+	}
+}
+
+void input_floor(Floor flor_1) {
+	cout << "Input ceiling height of "<< " flor: ";
+	cin >> flor_1.ceiling_height;
+	/*/do {
+		/*if (flor_1.count_room < 2 || flor_1.count_room > 4) {
+			cout << "Imposible room count\n";
 		}
-		flor_1.room_ss.push_back(room_1);
-		count_2++;
-	}
+	} while (flor_1.count_room < 2 || flor_1.count_room > 4);*/
 }
 
-void input_floor(Bulds::House_s& house_1) {
-	int count_1 = 0;
-	while (count_1 < house_1.count_floar) {
-		Bulds::House_s::Floor flor_1;
-		cout << "Input ceiling height of " << count_1 + 1 << " flor: ";
-		cin >> flor_1.ceiling_height;
-		do {
-			cout << "Input count room of " << count_1 + 1 << " flor: ";
-			cin >> flor_1.count_room;
-			if (flor_1.count_room < 2 || flor_1.count_room > 4) {
-				cout << "Imposible room count\n";
-			}
-		} while (flor_1.count_room < 2 || flor_1.count_room > 4);
-		input_room(flor_1);
-		house_1.floor_ss.push_back(flor_1);
-		count_1++;
-	}
-}
-
-void input_house(Bulds& bulds_1) {
+/*/void input_house(Bulds& bulds_1) {
 	Bulds::House_s house_1;
 	cout << "What is the area of your house? ";
 	cin >> house_1.Square_H;
@@ -158,68 +118,59 @@ void input_bathhouse(Bulds& bulds_1) {
 		bathhouse_1.backs |= yes;
 	}
 	bulds_1.bathhouse_ss.push_back(bathhouse_1);
+}*/
+
+void input_bulds(Bulds& bulds_1) {
+	
 }
 
-void input_bulds(Village::Plot& plot_1) {
-	Bulds bulds_1;
-	if (plot_1.bulds & house) {
-		input_house(bulds_1);
-	}
-	if (plot_1.bulds & garage) {
-		input_garage(bulds_1);
-	}
-	if (plot_1.bulds & shed) {
-		input_shed(bulds_1);
-	}
-	if (plot_1.bulds & bathhouse) {
-		input_bathhouse(bulds_1);
-	}
-	plot_1.buld_ss.push_back(bulds_1);
-}
-
-void input_plot(Village& village_1) {
-	int count = 0;
-	while (count < village_1.count_plot) {
-		Village::Plot plot_1;
-		cout << "Input plot number: ";
-		cin >> plot_1.number;
-
-		cout << "You have house in plot 1.Yes or 2.No? ";
-		int answer;
+void input_plot(Plot plot_1) {
+	cout << "Input plot number: ";
+	cin >> plot_1.number;
+	int answer;
+	do {
+		cout << "How many houses do you have? ";
 		cin >> answer;
-		if (answer == 1) {
-			plot_1.bulds |= house;
+		if (answer < 1) {
+			cout << "Imposible count home\n";
 		}
-		cout << "You have garage in plot 1.Yes or 2.No? ";
-		cin >> answer;
-		if (answer == 1) {
-			plot_1.bulds |= garage;
-		}
-		cout << "You have shed in plot 1.Yes or 2.No? ";
-		cin >> answer;
-		if (answer == 1) {
-			plot_1.bulds |= shed;
-		}
-		cout << "You have bathhouse in plot 1.Yes or 2.No? ";
-		cin >> answer;
-		if (answer == 1) {
-			plot_1.bulds |= bathhouse;
-		}
-		if ((plot_1.bulds | house) | (plot_1.bulds | garage) | (plot_1.bulds | shed) | (plot_1.bulds | bathhouse)) {
-			input_bulds(plot_1);
-		}
-		village_1.plot_ss.push_back(plot_1);
-		count++;
+	} while (answer < 1);
+	while (answer != 0) {
+		Bulds bulds_1;
+		bulds_1.type = house;
+		input_bulds(bulds_1);
+	}
+	cout << "You have garage in plot 1.Yes or 2.No? ";
+	cin >> answer;
+	if (answer == 1) {
+		plot_1.bulds |= garage;
+	}
+	cout << "You have shed in plot 1.Yes or 2.No? ";
+	cin >> answer;
+	if (answer == 1) {
+		plot_1.bulds |= shed;
+	}
+	cout << "You have bathhouse in plot 1.Yes or 2.No? ";
+	cin >> answer;
+	if (answer == 1) {
+		plot_1.bulds |= bathhouse;
+	}
+	if ((plot_1.bulds | house) | (plot_1.bulds | garage) | (plot_1.bulds | shed) | (plot_1.bulds | bathhouse)) {
+		input_bulds(plot_1);
 	}
 }
 
 void input_village(Village& village_1) {
 	cout << "Input count all plots";
-	cin >> village_1.count_plot;
+	int count_plot = 0;
+	cin >> count_plot;
 	cout << "input square of village: ";
 	cin >> village_1.Square;
-	if (village_1.count_plot > 0) {
-		input_plot(village_1);
+	while (count_plot != 0) {
+		Plot plot_1;
+		input_plot(plot_1);
+		village_1.plot_ss.push_back(plot_1);
+		count_plot--;
 	}
 }
 
