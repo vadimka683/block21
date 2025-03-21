@@ -14,7 +14,7 @@ struct Vectors
 struct character
 {
 	Vectors position;
-	char name[50] = "value";
+	string name;
 	int lives = 0, armor = 0, damage = 0;
 	bool team = false;
 	bool status_live = true;
@@ -23,9 +23,10 @@ struct character
 void save(vector<character>& all_players) {
 	ofstream save_play("play.BIN", ios::binary);
 	for (int i = 0; i < all_players.size(); i++) {
-		save_play.write(reinterpret_cast<char*>(&all_players[i]), sizeof(all_players[i]));
-		/*
-		save_play.write(reinterpret_cast<char*>(&all_players[i].name), sizeof(all_players[i].name));
+		/*save_play.write(reinterpret_cast<char*>(&all_players[i]), sizeof(all_players[i]));*/
+		int name_leght = all_players[i].name.length();
+		save_play.write(reinterpret_cast<char*>(&name_leght), sizeof(name_leght));
+		save_play.write(all_players[i].name.data(), name_leght);
 		save_play.write(reinterpret_cast<char*>(&all_players[i].team), sizeof(all_players[i].team));
 		save_play.write(reinterpret_cast<char*>(&all_players[i].status_live), sizeof(all_players[i].status_live));
 		save_play.write(reinterpret_cast<char*>(&all_players[i].lives), sizeof(all_players[i].lives));
@@ -33,7 +34,6 @@ void save(vector<character>& all_players) {
 		save_play.write(reinterpret_cast<char*>(&all_players[i].damage), sizeof(all_players[i].damage));
 		save_play.write(reinterpret_cast<char*>(&all_players[i].position.X), sizeof(all_players[i].position.X));
 		save_play.write(reinterpret_cast<char*>(&all_players[i].position.Y), sizeof(all_players[i].position.Y));
-		*/
 	}
 	save_play.close();
 }
@@ -46,9 +46,21 @@ void read(vector<character>& all_players) {
 	}
 	all_players.clear();
 	character temp;
-	while (save_play.read(reinterpret_cast<char*>(&temp),sizeof(temp))) {
+	while (!save_play.eof()) {
+		int name_leght;
+		save_play.read(reinterpret_cast<char*>(&name_leght), sizeof(name_leght));
+		temp.name.resize(name_leght);
+		save_play.read(&temp.name[0],name_leght);
+		save_play.read(reinterpret_cast<char*>(&temp.team), sizeof(temp.team));
+		save_play.read(reinterpret_cast<char*>(&temp.status_live), sizeof(temp.status_live));
+		save_play.read(reinterpret_cast<char*>(&temp.lives), sizeof(temp.lives));
+		save_play.read(reinterpret_cast<char*>(&temp.armor), sizeof(temp.armor));
+		save_play.read(reinterpret_cast<char*>(&temp.damage), sizeof(temp.damage));
+		save_play.read(reinterpret_cast<char*>(&temp.position.X), sizeof(temp.position.X));
+		save_play.read(reinterpret_cast<char*>(&temp.position.Y), sizeof(temp.position.Y));
 		all_players.push_back(temp);
 	}
+	all_players.pop_back();
 	if (!save_play.eof()) {
 		cout << "Error";
 	}
@@ -74,7 +86,9 @@ void input_enemy(vector<character>& all_charaters, int& count_enemy) {
 	srand(time(NULL));
 	for (int i = 0; i < count_enemy; i++) {
 		character enemy;
-		snprintf(enemy.name,sizeof(enemy.name), "Enemy%d", i);
+		string number = to_string(i);
+		enemy.name = "enemy";
+		enemy.name += number;
 		enemy.status_live = true;
 		enemy.team = false;
 		enemy.lives = rand() % 101 + 50;
