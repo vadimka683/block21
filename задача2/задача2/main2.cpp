@@ -42,12 +42,10 @@ struct Village
 };
 
 void input_room(Room& room_1) {
-	int count_2 = 0;
-	count_2++;
-	cout << "Input Squar " << count_2 + 1 << " room: ";
+	cout << "Input Squar of room: ";
 	cin >> room_1.Square;
 	char answer_;
-	cout << "What is the room: 1.bedroom, 2.kitchen, 3.bathroom, 4.children_room, 5.living_room = 16 ? ";
+	cout << "What is the room: 1.bedroom, 2.kitchen, 3.bathroom, 4.children_room, 5.living_room: ";
 	cin >> answer_;
 	switch (answer_)
 	{
@@ -61,70 +59,67 @@ void input_room(Room& room_1) {
 	}
 }
 
-void input_floor(Floor flor_1) {
-	cout << "Input ceiling height of "<< " flor: ";
+void input_floor(Floor& flor_1) {
+	cout << "Input ceiling height of floor ";
 	cin >> flor_1.ceiling_height;
-	/*/do {
-		/*if (flor_1.count_room < 2 || flor_1.count_room > 4) {
+	int count_room;
+	do {
+		cout << "Input count room at floor ";
+		cin >> count_room;
+		if (count_room < 2 || count_room > 4) {
 			cout << "Imposible room count\n";
 		}
-	} while (flor_1.count_room < 2 || flor_1.count_room > 4);*/
-}
-
-/*/void input_house(Bulds& bulds_1) {
-	Bulds::House_s house_1;
-	cout << "What is the area of your house? ";
-	cin >> house_1.Square_H;
-	string answer_3;
-	cout << "You have bakes in house: Yes or No? ";
-	cin >> answer_3;
-	if (answer_3 == "Yes") {
-		house_1.backs *= yes;
+	} while (count_room < 2 || count_room > 4);
+	while (count_room != 0) {
+		Room room_1;
+		input_room(room_1);
+		flor_1.room_ss.push_back(room_1);
+		count_room--;
 	}
-	do {
-		cout << "How many floors does your house have? ";
-		cin >> house_1.count_floar;
-		if (house_1.count_floar < 1 || house_1.count_floar > 3) {
-			cout << "Imposible floor count\n";
-		}
-	} while (house_1.count_floar < 1 || house_1.count_floar > 3);
-	input_floor(house_1);
-	bulds_1.house_ss.push_back(house_1);
 }
-
-void input_garage(Bulds& bulds_1) {
-	Bulds::Garage garage_1;
-	cout << "Input squar of garage: ";
-	cin >> garage_1.Square;
-	bulds_1.garage_ss.push_back(garage_1);
-
-}
-
-void input_shed(Bulds& bulds_1) {
-	Bulds::Shed shed_1;
-	cout << "Input squar of shed: ";
-	cin >> shed_1.Square;
-	bulds_1.shed_ss.push_back(shed_1);
-}
-
-void input_bathhouse(Bulds& bulds_1) {
-	Bulds::Bathhouse bathhouse_1;
-	cout << "Input squar of bathhouse: ";
-	cin >> bathhouse_1.Square;
-	string answer_4;
-	cout << "You have bakes in bathhouse: Yes or No? ";
-	cin >> answer_4;
-	if (answer_4 == "Yes") {
-		bathhouse_1.backs |= yes;
-	}
-	bulds_1.bathhouse_ss.push_back(bathhouse_1);
-}*/
 
 void input_bulds(Bulds& bulds_1) {
-	
+	if (bulds_1.type & house) {
+		cout << "What is the area of your house? ";
+		cin >> bulds_1.Square;
+		string answer_3;
+		cout << "You have bakes in house: Yes or No? ";
+		cin >> answer_3;
+		bulds_1.backs = (answer_3 == "Yes") ? true : false;
+		int answer;
+		do {
+			cout << "How many floors does your house have? ";
+			cin >> answer;
+			if (answer < 1 || answer>3) {
+				cout << "Inposible count\n";
+			}
+		} while (answer < 1 || answer>3);
+		while (answer != 0) {
+			Floor floor_1;
+			input_floor(floor_1);
+			bulds_1.floor_ss.push_back(floor_1);
+			answer--;
+		}
+	}
+	else if (bulds_1.type & garage) {
+		cout << "Input squar of garage: ";
+		cin >> bulds_1.Square;
+	}
+	else if (bulds_1.type & shed) {
+		cout << "Input squar of shed: ";
+		cin >> bulds_1.Square;
+	}
+	else if (bulds_1.type & bathhouse) {
+		cout << "Input squar of bathhouse: ";
+		cin >> bulds_1.Square;
+		string answer_2;
+		cout << "You have bakes in bathhouse: Yes or No? ";
+		cin >> answer_2;
+		bulds_1.backs = (answer_2 == "Yes") ? true : false;
+	}
 }
 
-void input_plot(Plot plot_1) {
+void input_plot(Plot& plot_1) {
 	cout << "Input plot number: ";
 	cin >> plot_1.number;
 	int answer;
@@ -139,33 +134,42 @@ void input_plot(Plot plot_1) {
 		Bulds bulds_1;
 		bulds_1.type = house;
 		input_bulds(bulds_1);
+		plot_1.buld_ss.push_back(bulds_1);
+		answer--;
 	}
 	cout << "You have garage in plot 1.Yes or 2.No? ";
 	cin >> answer;
 	if (answer == 1) {
-		plot_1.bulds |= garage;
+		Bulds bulds_1;
+		bulds_1.type = garage;
+		input_bulds(bulds_1);
+		plot_1.buld_ss.push_back(bulds_1);
 	}
 	cout << "You have shed in plot 1.Yes or 2.No? ";
 	cin >> answer;
 	if (answer == 1) {
-		plot_1.bulds |= shed;
+		Bulds bulds_1;
+		bulds_1.type = shed;
+		input_bulds(bulds_1);
+		plot_1.buld_ss.push_back(bulds_1);
 	}
 	cout << "You have bathhouse in plot 1.Yes or 2.No? ";
 	cin >> answer;
 	if (answer == 1) {
-		plot_1.bulds |= bathhouse;
+		Bulds bulds_1;
+		bulds_1.type = bathhouse;
+		input_bulds(bulds_1);
+		plot_1.buld_ss.push_back(bulds_1);
 	}
-	if ((plot_1.bulds | house) | (plot_1.bulds | garage) | (plot_1.bulds | shed) | (plot_1.bulds | bathhouse)) {
-		input_bulds(plot_1);
-	}
+	
 }
 
 void input_village(Village& village_1) {
+	cout << "input square of village: ";
+	cin >> village_1.Square;
 	cout << "Input count all plots";
 	int count_plot = 0;
 	cin >> count_plot;
-	cout << "input square of village: ";
-	cin >> village_1.Square;
 	while (count_plot != 0) {
 		Plot plot_1;
 		input_plot(plot_1);
@@ -176,18 +180,9 @@ void input_village(Village& village_1) {
 
 void calculation_percentage_development(Village& village_1,int* part_of_occupied_land) {
 	int occupied_land = 0;
-	for (int i = 0; i < village_1.count_plot; i++) {
-		if (!village_1.plot_ss[i].buld_ss[0].house_ss.empty()) {
-			occupied_land += village_1.plot_ss[i].buld_ss[0].house_ss[0].Square_H;
-		}
-		if (!village_1.plot_ss[i].buld_ss[0].garage_ss.empty()) {
-			occupied_land += village_1.plot_ss[i].buld_ss[0].garage_ss[0].Square;
-		}
-		if (!village_1.plot_ss[i].buld_ss[0].shed_ss.empty()) {
-			occupied_land += village_1.plot_ss[i].buld_ss[0].shed_ss[0].Square;
-		}
-		if (!village_1.plot_ss[i].buld_ss[0].bathhouse_ss.empty()) {
-			occupied_land += village_1.plot_ss[i].buld_ss[0].bathhouse_ss[0].Square;
+	for (int i = 0; i < village_1.plot_ss.size(); i++) {
+		for (int j = 0; j < village_1.plot_ss[i].buld_ss.size(); j++) {
+			occupied_land += village_1.plot_ss[i].buld_ss[j].Square;
 		}
 	}
 	*part_of_occupied_land = ((double)occupied_land / (double)village_1.Square) * 100;
@@ -199,4 +194,4 @@ int main() {
 	int part_of_occupied_land;
 	calculation_percentage_development(village_1, &part_of_occupied_land);
 	cout << "Part of occupied land = " << part_of_occupied_land << " %";
-	}
+}
